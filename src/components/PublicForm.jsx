@@ -30,10 +30,8 @@ export default function PublicForm() {
     phone: '',
     password: '',
     confirmPassword: '',
-    terms: false,
-    updates: false,
-    futureStudies: false,
-    ageVerified: false,
+    birthDate: '',
+    acceptedTerms: false,
     medicalConditions: [],
     otherMedical: ''
   })
@@ -61,13 +59,11 @@ export default function PublicForm() {
     if (!formData.email) newErrors.email = 'El email es obligatorio'
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'El formato del email no es válido'
     
-    if (!formData.phone) newErrors.phone = 'El teléfono es obligatorio'
+    if (!formData.birthDate) newErrors.birthDate = 'La fecha de nacimiento es obligatoria'
     if (!formData.password) newErrors.password = 'La contraseña es obligatoria'
     if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Las contraseñas no coinciden'
     
-    if (!formData.terms) newErrors.terms = 'Debes aceptar los términos y condiciones'
-    if (!formData.futureStudies) newErrors.futureStudies = 'Debes confirmar tu interés en comunicados'
-    if (!formData.ageVerified) newErrors.ageVerified = 'Debes verificar que eres mayor de 16 años'
+    if (!formData.acceptedTerms) newErrors.acceptedTerms = 'Debes aceptar los términos y condiciones para continuar'
     
     if (formData.medicalConditions.length === 0) {
       newErrors.medicalConditions = 'Debes seleccionar al menos una opción'
@@ -211,6 +207,15 @@ export default function PublicForm() {
             {errors.phone && <span className="error-message">{errors.phone}</span>}
           </div>
 
+          <div className="form-group">
+            <label>Fecha de Nacimiento * (DD/MM/AAAA)</label>
+            <input 
+              type="date" name="birthDate" className="form-control" 
+              value={formData.birthDate} onChange={handleChange} 
+            />
+            {errors.birthDate && <span className="error-message">{errors.birthDate}</span>}
+          </div>
+
           <div className="form-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
             <div className="form-group">
               <label>Contraseña *</label>
@@ -265,47 +270,16 @@ export default function PublicForm() {
           <div className="checkbox-section">
             <label style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', cursor: 'pointer' }}>
               <input 
-                type="checkbox" name="terms" checked={formData.terms} 
+                type="checkbox" name="acceptedTerms" checked={formData.acceptedTerms} 
                 onChange={handleChange} style={{ marginTop: '0.25rem', flexShrink: 0 }} 
               />
-              <span style={{ fontSize: '0.9rem' }}>
-                Al marcar esta casilla, usted acepta los Términos y condiciones de ECRI incluida nuestra política de privacidad. *
+              <span style={{ fontSize: '0.9rem', lineHeight: '1.4' }}>
+                Al marcar esta casilla, usted acepta los Términos y condiciones de ECRI, incluida nuestra política de privacidad. Asimismo, autoriza el envío de actualizaciones sobre servicios de salud gratuitos o de bajo costo, ensayos clínicos e información de salud relevante como miembro de ECRI. Es posible que se apliquen tarifas estándar de mensajería móvil y usted puede optar por dejar de recibir nuestras comunicaciones en cualquier momento.
+                <br /><br />
+                Opciones de registro: Seleccione todas las opciones a continuación que reflejen su interés por participar. Confirmo que me interesa recibir comunicados sobre estudios futuros, entendiendo que pueden aplicarse cargos estándar de mensajería móvil y que puedo optar por dejar de recibirlos en cualquier momento. Asimismo, verifico que tengo al menos 16 años. *
               </span>
             </label>
-            {errors.terms && <div className="error-message" style={{ marginBottom: '1.5rem', marginTop: '-1rem' }}>{errors.terms}</div>}
-
-            <label style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', cursor: 'pointer' }}>
-              <input 
-                type="checkbox" name="updates" checked={formData.updates} 
-                onChange={handleChange} style={{ marginTop: '0.25rem', flexShrink: 0 }} 
-              />
-              <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                Por favor envíeme actualizaciones sobre servicios de salud gratuitos o de bajo costo, ensayos clínicos e información de salud importante como miembro de ECRI. Es posible que se apliquen tarifas estándar de mensajería móvil y usted puede optar por no recibir noticias nuestras en cualquier momento.
-              </span>
-            </label>
-
-            <h4 style={{ marginBottom: '1rem' }}>Opciones de registro</h4>
-            <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>Seleccione todas las opciones a continuación que reflejen su interés por participar.</p>
-
-            <label style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', cursor: 'pointer' }}>
-              <input 
-                type="checkbox" name="futureStudies" checked={formData.futureStudies} 
-                onChange={handleChange} style={{ marginTop: '0.25rem', flexShrink: 0 }} 
-              />
-              <span style={{ fontSize: '0.9rem' }}>
-                Me interesa recibir comunicados sobre estudios futuros. Es posible que se apliquen cargos de mensajería móvil comunes; puede optar por dejar de recibir nuestros comunicados en cualquier momento. *
-              </span>
-            </label>
-            {errors.futureStudies && <div className="error-message" style={{ marginBottom: '1.5rem', marginTop: '-1rem' }}>{errors.futureStudies}</div>}
-
-            <label style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', cursor: 'pointer' }}>
-              <input 
-                type="checkbox" name="ageVerified" checked={formData.ageVerified} 
-                onChange={handleChange} style={{ marginTop: '0.25rem', flexShrink: 0 }} 
-              />
-              <span style={{ fontSize: '0.9rem' }}>Verifico que tengo al menos 16 años. *</span>
-            </label>
-            {errors.ageVerified && <div className="error-message" style={{ marginBottom: '1.5rem', marginTop: '-1rem' }}>{errors.ageVerified}</div>}
+            {errors.acceptedTerms && <div className="error-message" style={{ marginBottom: '1.5rem', marginTop: '-1rem' }}>{errors.acceptedTerms}</div>}
           </div>
 
           <button 

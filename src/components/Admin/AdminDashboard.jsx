@@ -52,20 +52,39 @@ export default function AdminDashboard() {
     fetchForms()
   }
 
+  const calculateAge = (birthDateStr) => {
+    if (!birthDateStr) return 'N/A'
+    const birthDate = new Date(birthDateStr)
+    // Get current date in New York timezone
+    const nyDateStr = new Intl.DateTimeFormat('en-US', { 
+      timeZone: 'America/New_York',
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric'
+    }).format(new Date())
+    const today = new Date(nyDateStr)
+    
+    let age = today.getFullYear() - birthDate.getFullYear()
+    const m = today.getMonth() - birthDate.getMonth()
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--
+    }
+    return age
+  }
+
   const exportToExcel = () => {
     const dataToExport = filteredResponses.map(r => ({
-      Fecha: new Date(r.created_at).toLocaleDateString(),
-      Hora: new Date(r.created_at).toLocaleTimeString(),
+      Fecha_Envio: new Date(r.created_at).toLocaleDateString(),
+      Hora_Envio: new Date(r.created_at).toLocaleTimeString(),
       Nombre: r.data.firstName,
       Apellido: r.data.lastName,
       Email: r.data.email,
       Telefono: r.data.phone,
+      Fecha_Nacimiento: r.data.birthDate || 'N/A',
+      Edad: calculateAge(r.data.birthDate),
       Diagnosticos: r.data.medicalConditions.join(', '),
       Otro: r.data.otherMedical || '',
-      Terminos: r.data.terms ? 'Sí' : 'No',
-      Actualizaciones: r.data.updates ? 'Sí' : 'No',
-      Interes_Futuro: r.data.futureStudies ? 'Sí' : 'No',
-      Edad_Verificada: r.data.ageVerified ? 'Sí' : 'No'
+      Consentimiento_Unico: r.data.acceptedTerms ? 'Aceptado' : 'No'
     }))
 
     const ws = XLSX.utils.json_to_sheet(dataToExport)
@@ -211,6 +230,7 @@ export default function AdminDashboard() {
                   <thead>
                     <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--border)' }}>
                       <th style={{ padding: '1rem' }}>Usuario</th>
+                      <th style={{ padding: '1rem' }}>Edad</th>
                       <th style={{ padding: '1rem' }}>Contacto</th>
                       <th style={{ padding: '1rem' }}>Fecha</th>
                       <th style={{ padding: '1rem' }}>Consentimiento</th>
@@ -223,15 +243,16 @@ export default function AdminDashboard() {
                           <div style={{ fontWeight: 600 }}>{r.data.firstName} {r.data.lastName}</div>
                           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{r.data.email}</div>
                         </td>
+                        <td style={{ padding: '1rem' }}>{calculateAge(r.data.birthDate)}</td>
                         <td style={{ padding: '1rem' }}>{r.data.phone}</td>
                         <td style={{ padding: '1rem' }}>{new Date(r.created_at).toLocaleDateString()}</td>
                         <td style={{ padding: '1rem' }}>
                           <span style={{ 
                             fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px',
-                            background: r.data.terms ? '#D1FADF' : '#FEE4E2',
-                            color: r.data.terms ? '#027A48' : '#B42318'
+                            background: r.data.acceptedTerms ? '#D1FADF' : '#FEE4E2',
+                            color: r.data.acceptedTerms ? '#027A48' : '#B42318'
                           }}>
-                            {r.data.terms ? 'ACEPTÓ' : 'N/A'}
+                            {r.data.acceptedTerms ? 'ACEPTÓ' : 'N/A'}
                           </span>
                         </td>
                       </tr>
