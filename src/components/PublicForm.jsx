@@ -17,6 +17,13 @@ const medicalOptions = [
   'Otro'
 ]
 
+const countries = [
+  'Argentina', 'Bolivia', 'Brasil', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 
+  'Ecuador', 'El Salvador', 'Estados Unidos', 'Guatemala', 'Honduras', 'México', 
+  'Nicaragua', 'Panamá', 'Paraguay', 'Perú', 'Puerto Rico', 'República Dominicana', 
+  'Uruguay', 'Venezuela'
+]
+
 export default function PublicForm() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -28,9 +35,12 @@ export default function PublicForm() {
     lastName: '',
     email: '',
     phone: '',
+    gender: '',
     password: '',
     confirmPassword: '',
     birthDate: '',
+    birthCountry: '',
+    residenceCountry: '',
     acceptedTerms: false,
     medicalConditions: [],
     otherMedical: ''
@@ -59,7 +69,12 @@ export default function PublicForm() {
     if (!formData.email) newErrors.email = 'El email es obligatorio'
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'El formato del email no es válido'
     
+    if (!formData.phone) newErrors.phone = 'El teléfono es obligatorio'
+    if (!formData.gender) newErrors.gender = 'El género es obligatorio'
     if (!formData.birthDate) newErrors.birthDate = 'La fecha de nacimiento es obligatoria'
+    if (!formData.birthCountry) newErrors.birthCountry = 'El país de nacimiento es obligatorio'
+    if (!formData.residenceCountry) newErrors.residenceCountry = 'El país de residencia es obligatorio'
+    
     if (!formData.password) newErrors.password = 'La contraseña es obligatoria'
     if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Las contraseñas no coinciden'
     
@@ -198,22 +213,60 @@ export default function PublicForm() {
             {errors.email && <span className="error-message">{errors.email}</span>}
           </div>
 
-          <div className="form-group">
-            <label>Teléfono *</label>
-            <input 
-              type="tel" name="phone" className="form-control" 
-              value={formData.phone} onChange={handleChange} 
-            />
-            {errors.phone && <span className="error-message">{errors.phone}</span>}
+          <div className="form-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+            <div className="form-group">
+              <label>Teléfono *</label>
+              <input 
+                type="tel" name="phone" className="form-control" 
+                value={formData.phone} onChange={handleChange} 
+              />
+              {errors.phone && <span className="error-message">{errors.phone}</span>}
+            </div>
+            <div className="form-group">
+              <label>Género *</label>
+              <select 
+                name="gender" className="form-control" 
+                value={formData.gender} onChange={handleChange}
+              >
+                <option value="">Seleccione...</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+              </select>
+              {errors.gender && <span className="error-message">{errors.gender}</span>}
+            </div>
           </div>
 
-          <div className="form-group">
-            <label>Fecha de Nacimiento * (DD/MM/AAAA)</label>
-            <input 
-              type="date" name="birthDate" className="form-control" 
-              value={formData.birthDate} onChange={handleChange} 
-            />
-            {errors.birthDate && <span className="error-message">{errors.birthDate}</span>}
+          <div className="form-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+            <div className="form-group">
+              <label>Fecha de Nacimiento *</label>
+              <input 
+                type="date" name="birthDate" className="form-control" 
+                value={formData.birthDate} onChange={handleChange} 
+              />
+              {errors.birthDate && <span className="error-message">{errors.birthDate}</span>}
+            </div>
+            <div className="form-group">
+              <label>País de Nacimiento *</label>
+              <input 
+                type="text" name="birthCountry" className="form-control" 
+                value={formData.birthCountry} onChange={handleChange}
+                placeholder="Ej. Colombia"
+              />
+              {errors.birthCountry && <span className="error-message">{errors.birthCountry}</span>}
+            </div>
+            <div className="form-group">
+              <label>País de Residencia *</label>
+              <select 
+                name="residenceCountry" className="form-control" 
+                value={formData.residenceCountry} onChange={handleChange}
+              >
+                <option value="">Seleccione...</option>
+                {countries.map(country => (
+                  <option key={country} value={country}>{country}</option>
+                ))}
+              </select>
+              {errors.residenceCountry && <span className="error-message">{errors.residenceCountry}</span>}
+            </div>
           </div>
 
           <div className="form-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>

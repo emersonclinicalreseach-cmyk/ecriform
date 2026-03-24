@@ -80,8 +80,11 @@ export default function AdminDashboard() {
       Apellido: r.data.lastName,
       Email: r.data.email,
       Telefono: r.data.phone,
+      Genero: r.data.gender || 'N/A',
       Fecha_Nacimiento: r.data.birthDate || 'N/A',
       Edad: calculateAge(r.data.birthDate),
+      Pais_Nacimiento: r.data.birthCountry || 'N/A',
+      Pais_Residencia: r.data.residenceCountry || 'N/A',
       Diagnosticos: r.data.medicalConditions.join(', '),
       Otro: r.data.otherMedical || '',
       Consentimiento_Unico: r.data.acceptedTerms ? 'Aceptado' : 'No'
@@ -208,8 +211,15 @@ export default function AdminDashboard() {
                     <option value="">Todos</option>
                     <option value="Diabetes">Diabetes</option>
                     <option value="Hipertensión">Hipertensión</option>
-                    <option value="Obesidad o sobrepeso">Obesidad</option>
-                    {/* Add more as needed */}
+                    <option value="Colesterol y/o triglicéridos altos">Colesterol/Triglicéridos</option>
+                    <option value="Ataque cardíaco y/o derrame cerebral">Ataque cardíaco/Derrame</option>
+                    <option value="Enfermedad visual">Enfermedad visual</option>
+                    <option value="Estrés, depresión, ansiedad, trastorno alimentario">Salud Mental</option>
+                    <option value="Obesidad o sobrepeso">Obesidad/Sobrepeso</option>
+                    <option value="Fibromas (uterinos)">Fibromas</option>
+                    <option value="Virus del Papiloma Humano">VPH</option>
+                    <option value="Enfermedades de Transmisión Sexual">ETS</option>
+                    <option value="Otro">Otro</option>
                   </select>
                 </div>
                 <div className="form-group" style={{ margin: 0 }}>
@@ -230,7 +240,9 @@ export default function AdminDashboard() {
                   <thead>
                     <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--border)' }}>
                       <th style={{ padding: '1rem' }}>Usuario</th>
+                      <th style={{ padding: '1rem' }}>Género</th>
                       <th style={{ padding: '1rem' }}>Edad</th>
+                      <th style={{ padding: '1rem' }}>País (Res)</th>
                       <th style={{ padding: '1rem' }}>Contacto</th>
                       <th style={{ padding: '1rem' }}>Fecha</th>
                       <th style={{ padding: '1rem' }}>Consentimiento</th>
@@ -243,7 +255,9 @@ export default function AdminDashboard() {
                           <div style={{ fontWeight: 600 }}>{r.data.firstName} {r.data.lastName}</div>
                           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{r.data.email}</div>
                         </td>
+                        <td style={{ padding: '1rem' }}>{r.data.gender || 'N/A'}</td>
                         <td style={{ padding: '1rem' }}>{calculateAge(r.data.birthDate)}</td>
+                        <td style={{ padding: '1rem' }}>{r.data.residenceCountry || 'N/A'}</td>
                         <td style={{ padding: '1rem' }}>{r.data.phone}</td>
                         <td style={{ padding: '1rem' }}>{new Date(r.created_at).toLocaleDateString()}</td>
                         <td style={{ padding: '1rem' }}>
