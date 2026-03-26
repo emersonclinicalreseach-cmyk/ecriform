@@ -12,14 +12,18 @@ import {
   ChevronRight,
   Calendar,
   User,
-  Activity
+  Activity,
+  Edit,
+  Layout
 } from 'lucide-react'
+import ContentEditor from './ContentEditor'
 
 export default function AdminDashboard() {
   const [forms, setForms] = useState([])
   const [responses, setResponses] = useState([])
   const [selectedForm, setSelectedForm] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [editingContentForm, setEditingContentForm] = useState(null)
   const [filters, setFilters] = useState({
     dateFrom: '',
     dateTo: '',
@@ -131,6 +135,26 @@ export default function AdminDashboard() {
     else fetchForms()
   }
 
+  const handleSaveContent = async (html, data) => {
+    if (!editingContentForm) return
+
+    const { error } = await supabase
+      .from('forms')
+      .update({ 
+        content_html: html, 
+        content_data: data 
+      })
+      .eq('id', editingContentForm.id)
+
+    if (error) {
+      alert('Error al guardar contenido: ' + error.message)
+    } else {
+      alert('Contenido guardado exitosamente')
+      setEditingContentForm(null)
+      fetchForms()
+    }
+  }
+
   return (
     <div className="admin-layout" style={{ display: 'flex', minHeight: '100vh' }}>
       {/* Sidebar Placeholder or Top Nav */}
@@ -177,6 +201,9 @@ export default function AdminDashboard() {
                       </button>
                       <button className="btn" style={{ padding: '4px 8px', fontSize: '0.8rem' }} onClick={(e) => { e.stopPropagation(); toggleFormStatus(form.id, form.active); }}>
                         {form.active ? <PowerOff size={14} /> : <Power size={14} />}
+                      </button>
+                      <button className="btn btn-primary" style={{ padding: '4px 8px', fontSize: '0.8rem' }} onClick={(e) => { e.stopPropagation(); setEditingContentForm(form); }}>
+                        <Layout size={14} /> Contenido
                       </button>
                     </div>
                   </div>
@@ -285,6 +312,14 @@ export default function AdminDashboard() {
           )}
         </div>
       </div>
+
+      {editingContentForm && (
+        <ContentEditor 
+          form={editingContentForm} 
+          onClose={() => setEditingContentForm(null)} 
+          onSave={handleSaveContent} 
+        />
+      )}
     </div>
   )
 }

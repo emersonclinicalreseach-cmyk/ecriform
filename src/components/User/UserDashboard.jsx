@@ -24,7 +24,7 @@ export default function UserDashboard() {
 
     const { data: resp } = await supabase
       .from('responses')
-      .select('*, forms(title)')
+      .select('*, forms(title, content_html)')
       .eq('user_id', user.id)
     
     setResponses(resp || [])
@@ -90,19 +90,27 @@ export default function UserDashboard() {
         </section>
       </div>
 
-      <h2 style={{ marginTop: '3rem', marginBottom: '1.5rem' }}>Mis Respuestas</h2>
-      <div style={{ display: 'grid', gap: '1rem' }}>
+      <h2 style={{ marginTop: '3rem', marginBottom: '1.5rem' }}>Mis Recursos y Contenido</h2>
+      <div style={{ display: 'grid', gap: '2rem' }}>
         {responses.map(res => (
-          <div key={res.id} className="card" style={{ padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
+          <div key={res.id} className="card" style={{ padding: '0', overflow: 'hidden' }}>
+            <div style={{ padding: '1.5rem', borderBottom: res.forms?.content_html ? '1px solid var(--border)' : 'none', background: 'var(--surface)' }}>
               <h4 style={{ margin: 0 }}>{res.forms?.title || 'Formulario'}</h4>
               <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                Enviado el {new Date(res.created_at).toLocaleDateString()} a las {new Date(res.created_at).toLocaleTimeString()}
+                Registrado el {new Date(res.created_at).toLocaleDateString()}
               </p>
             </div>
-            <button className="btn" style={{ background: 'var(--background)', fontSize: '0.85rem' }} onClick={() => alert('Detalle de respuesta en desarrollo')}>
-              Ver Detalle
-            </button>
+            {res.forms?.content_html ? (
+              <div 
+                className="dynamic-content"
+                style={{ padding: '2rem' }}
+                dangerouslySetInnerHTML={{ __html: res.forms.content_html }}
+              />
+            ) : (
+              <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                No hay contenido adicional para este formulario.
+              </div>
+            )}
           </div>
         ))}
         {responses.length === 0 && (

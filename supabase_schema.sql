@@ -19,6 +19,8 @@ CREATE TABLE forms (
   description TEXT,
   active BOOLEAN DEFAULT TRUE,
   created_by UUID REFERENCES profiles(id),
+  content_html TEXT,
+  content_data JSONB,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
